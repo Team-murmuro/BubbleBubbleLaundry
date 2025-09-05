@@ -7,7 +7,7 @@ using System.Collections;
 public class MiniGame_1 : MiniGameController
 {
     private AudioSource audioSource;
-    private GameObject clothes;
+    private RectTransform clothes;
     public Sprite[] clotheSprites;
 
     public List<GameObject> spots;
@@ -24,7 +24,7 @@ public class MiniGame_1 : MiniGameController
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        clothes = transform.GetChild(0).GetChild(1).GetChild(0).gameObject;
+        clothes = transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<RectTransform>();
         spotCount = Random.Range(minSpotCount, maxSpotCount);
     }
 
@@ -115,6 +115,10 @@ public class MiniGame_1 : MiniGameController
             GameManager.Instance.ReputationHandler(-GameManager.Instance.reputeDecr);
         }
 
+        for (int i = 0; i < spots.Count; i++)
+            Destroy(spots[i]);
+        spots.Clear();
+
         transform.gameObject.SetActive(false);
         MiniGameManager.Instance.OnMiniGameEnd(isGameSuccess);
     }
@@ -129,8 +133,14 @@ public class MiniGame_1 : MiniGameController
     // ¾ó·è ·£´ý À§Ä¡ ¼³Á¤
     public Vector2 SetRandomPosition()
     {
-        Vector2 _anchorPosition = clothes.GetComponent<RectTransform>().position;
-        Vector2 _randomOffest = new Vector2(Random.Range(-randomRangeX, randomRangeX), Random.Range(-randomRangeY, randomRangeY));
-        return _anchorPosition + _randomOffest;
+        //Vector2 _anchorPosition = clothes.GetComponent<RectTransform>().position;
+        //Vector2 _randomOffest = new Vector2(Random.Range(-randomRangeX, randomRangeX), Random.Range(-randomRangeY, randomRangeY));
+        //return _anchorPosition + _randomOffest;
+
+        Vector2 _size = clothes.rect.size;
+        Vector2 _randomOffest = new Vector2(Random.Range(-_size.x / 2f, _size.x / 2f), Random.Range(-_size.y / 2f, _size.y / 2f));
+
+        Vector3 _woldPos = clothes.TransformPoint(_randomOffest);
+        return _woldPos;
     }
 }
